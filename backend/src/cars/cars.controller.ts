@@ -8,26 +8,24 @@ import {
   Param,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
-import { CreateCarDto } from './dto/create-car.dto';
-import { UpdateCarDto } from './dto/update-car.dto';
-// import { DeleteCarDto } from './dto/delete-car.dto';
+import { CarDto } from './dto/car.dto';
 @Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
   @Post()
-  create(@Body() car: CreateCarDto): Promise<CreateCarDto> {
+  create(@Body() car: CarDto): Promise<CarDto> {
     return this.carsService.create(car);
   }
   @Get()
-  findAll(): Promise<CreateCarDto[]> {
+  findAll(): Promise<CarDto[]> {
     return this.carsService.findAll();
   }
   @Patch()
-  update(@Body() car: UpdateCarDto): Promise<UpdateCarDto> {
+  update(@Body() car: CarDto): Promise<CarDto> {
     return this.carsService.update(car);
   }
   @Delete()
-  delete(@Param('id') id: string) {
+  delete(@Param('id') id: number) {
     return this.carsService.delete(id);
   }
 }

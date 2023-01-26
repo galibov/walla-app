@@ -1,0 +1,73 @@
+version: "3.8"
+services:
+  walla_nginx:
+    image: nginx:alpine
+    hostname: walla_nginx
+    env_file:
+      - ./.env
+    container_name: walla_nginx
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NGINX_PORT=${NGINX_PORT}
+      - NEST_PORT=${NEST_PORT}
+      - SERVER_NAME=${SERVER_NAME}
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+    depends_on:
+      - walla_nest
+    networks:
+      - walla-network
+
+  walla_nest:
+    container_name: walla_nest
+    hostname: walla_nest
+    environment:
+      - NODE_ENV:${NODE_ENV}
+    build:
+      context: .
+      target: ${NODE_ENV}
+      dockerfile: docker/nest/Dockerfile
+    env_file:
+      - ./.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+    depends_on:
+      - walla_mysql
+    networks:
+      - walla-network
+    restart: unless-stopped
+
+  walla_mysql:
+    image: mysql:5.7
+    container_name: walla_mysql
+    hostname: walla_mysql
+    env_file:
+      - ./.env
+    tty: true
+    ports:
+      - ${MYSQL_DB_PORT}:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB_NAME}
+      - MYSQL_USER=${MYSQL_DB_USER}
+      - MYSQL_PASSWORD=${MYSQL_DB_PASSWORD}
+      - SERVICE_TAGS=${NODE_ENV}
+    volumes:
+      - walla-mysql:/var/lib/mysql/
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - walla-network
+    restart: unless-stopped
+
+volumes:
+  walla-mysql:
+    driver: local
+
+networks:
+  walla-network:
+    driver: bridge
+    name: walla-network

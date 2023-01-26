@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  walla_mysql:
+    image: mysql:5.7
+    container_name: walla_mysql
+    hostname: walla_mysql
+    env_file:
+      - ./.env
+    tty: true
+    ports:
+      - ${MYSQL_DB_PORT}:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB_NAME}
+      - MYSQL_USER=${MYSQL_DB_USER}
+      - MYSQL_PASSWORD=${MYSQL_DB_PASSWORD}
+      - SERVICE_TAGS=${NODE_ENV}
+    volumes:
+      - walla-mysql:/var/lib/mysql/
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - walla-network
+    restart: unless-stopped
+
+volumes:
+  walla-mysql:
+    driver: local
+
+networks:
+  walla-network:
+    driver: bridge
+    name: walla-network
