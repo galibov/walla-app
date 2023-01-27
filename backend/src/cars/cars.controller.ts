@@ -24,7 +24,7 @@ export class CarsController {
   update(@Body() car: CarDto): Promise<CarDto> {
     return this.carsService.update(car);
   }
-  @Delete()
+  @Delete(':id')
   delete(@Param('id') id: number) {
     return this.carsService.delete(id);
   }

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import {mysqlConfig} from './mysql.config';
+import { mysqlConfig } from './mysql.config';
 import { config } from 'dotenv';
 
 config();

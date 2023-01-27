@@ -14,9 +14,35 @@ export const carsApi = createApi({
                 }),
             },
         ),
+
+        createCar: builder.mutation<ICar, ICar>({
+            query: (car: ICar) => ({
+                url: `/cars`,
+                method: 'POST',
+                body: car,
+            }),
+        }),
+
+        editCar: builder.mutation<ICar, ICar>({
+            query: (car: ICar) => ({
+                url: `/cars`,
+                method: 'PATCH',
+                body: car,
+            }),
+        }),
+
+        removeCar: builder.mutation<ICar, ICar>({
+            query: (car: ICar) => ({
+                url: `/cars/${car.id}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
 export const {
-    useGetCarListQuery
+    useLazyGetCarListQuery,
+    useCreateCarMutation,
+    useRemoveCarMutation,
+    useEditCarMutation
 } = carsApi
